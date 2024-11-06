@@ -2,7 +2,7 @@ import {
   IsEmail,
   IsString,
   IsStrongPassword,
-  MaxLength,
+  Matches,
   MinLength,
 } from 'class-validator';
 
@@ -14,18 +14,18 @@ export class SignUpDto {
   @MinLength(3)
   readonly name: string;
 
-  @MaxLength(20)
+  @Matches(/[a-zA-Z]/)
   @IsStrongPassword(
     {
       minLength: 8,
-      minLowercase: 1,
       minNumbers: 1,
       minSymbols: 1,
-      minUppercase: 1,
+      minLowercase: 0,
+      minUppercase: 0,
     },
     {
       message:
-        'Password must have at least one uppercase letter, one lowercase letter, one symbol, one number and at least 8 characters long',
+        'Password must have at least one special character, one number and is at least 8 characters long',
     },
   )
   readonly password: string;

@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { SigninDto, SignUpDto } from './dto';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
@@ -6,6 +6,8 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private readonly usersService: UsersService,
     private jwtService: JwtService,
@@ -23,6 +25,7 @@ export class AuthService {
   async signIn(signInDto: SigninDto) {
     const user = await this.usersService.findUserByEmail(signInDto.email);
     if (!user) {
+      this.logger.error('User was not found');
       throw new UnauthorizedException(
         'The Password or the email might be incorrect',
       );

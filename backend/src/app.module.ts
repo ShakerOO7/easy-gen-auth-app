@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { MONGODB_CONFIG } from './config';
 import { UsersModule } from './users/users.module';
-import { TYPEORM_CONFIG } from './config';
 
 @Module({
   imports: [
     UsersModule,
     AuthModule,
     ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRootAsync({
-      useFactory: TYPEORM_CONFIG,
+    MongooseModule.forRootAsync({
+      useFactory: MONGODB_CONFIG,
       inject: [ConfigService],
     }),
   ],

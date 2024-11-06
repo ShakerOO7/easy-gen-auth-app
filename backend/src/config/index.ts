@@ -1,4 +1,4 @@
-import TYPEORM_CONFIG from './typeorm-config';
 import JWT_CONFIG from './jwt-config';
+import MONGODB_CONFIG from './mongo-config';
 
-export { TYPEORM_CONFIG, JWT_CONFIG };
+export { JWT_CONFIG, MONGODB_CONFIG };
