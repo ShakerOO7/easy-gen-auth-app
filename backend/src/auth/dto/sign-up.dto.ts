@@ -15,7 +15,7 @@ export class SignUpDto {
   readonly name: string;
 
   // To make sure we have at least one letter in the password
-  @Matches(/[a-zA-Z]/)
+  @Matches(/[a-zA-Z]/, { message: 'Password must have at least one letter' })
   @IsStrongPassword(
     {
       minLength: 8,

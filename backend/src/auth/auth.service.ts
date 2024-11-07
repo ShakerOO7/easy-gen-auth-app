@@ -15,23 +15,33 @@ export class AuthService {
 
   async signUp(signUpDto: SignUpDto) {
     // hash the user password
-    const passwordHash = await bcrypt.hash(signUpDto.password, 10);
-    return this.usersService.createUser({
+    const passwordHash = await this.hashPassword(signUpDto);
+    const user = await this.usersService.createUser({
       ...signUpDto,
       password: passwordHash,
     });
+    this.logger.log(`Sign up successfull for user ${signUpDto.email}`);
+    return user;
+  }
+
+  private async hashPassword(signUpDto: SignUpDto) {
+    return await bcrypt.hash(signUpDto.password, 10);
   }
 
   async signIn(signInDto: SigninDto) {
     const user = await this.usersService.findUserByEmail(signInDto.email);
     if (!user) {
-      this.logger.error('User was not found');
+      this.logger.error(`User ${signInDto.email} was not found`);
       throw new UnauthorizedException(
         'The Password or the email might be incorrect',
       );
     }
-    const passwordMatch = bcrypt.compare(signInDto.password, user.password);
+    const passwordMatch = await this.comparePasswords(
+      signInDto.password,
+      user.password,
+    );
     if (!passwordMatch) {
+      this.logger.error(`Incorrect password for user ${signInDto.email}`);
       throw new UnauthorizedException(
         'The Password or the email might be incorrect',
       );
@@ -41,9 +51,12 @@ export class AuthService {
       sub: user.id,
       email: user.email,
     };
+    const accessToken = await this.jwtService.signAsync(payload);
+    this.logger.log(`Sign in successfull for user ${signInDto.email}`);
+    return { accessToken };
+  }
 
-    return {
-      accessToken: await this.jwtService.signAsync(payload),
-    };
+  private comparePasswords(password: string, hashPassword: string) {
+    return bcrypt.compare(password, hashPassword);
   }
 }

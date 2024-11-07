@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -9,6 +9,7 @@ import { User } from './schemas/user.schema';
  */
 @Injectable()
 export class UserRepository {
+  private readonly logger = new Logger(UserRepository.name);
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   create(dto: CreateUserDto) {
@@ -17,6 +18,7 @@ export class UserRepository {
 
   createAndSave(dto: CreateUserDto) {
     const user = this.create(dto);
+    this.logger.log(`Created the user ${dto.email}`);
     return user.save();
   }
 
