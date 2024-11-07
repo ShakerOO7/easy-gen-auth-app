@@ -19,7 +19,7 @@ export class UsersService {
     return this.userRepo.findByEmail(email);
   }
 
-  async userExists(email: string): Promise<boolean> {
+  userExists(email: string) {
     return this.userRepo.exists(email);
   }
 }
